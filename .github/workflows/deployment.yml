@@ -1,9 +1,16 @@
 name: Test Deploy by commit
-on: issues
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, reopened, synchronize, labeled]
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
 
 jobs:
   output-info:
     runs-on: ubuntu-latest
     steps:
       - name: Output event details
-        run: echo "${{ toJSON(github.event.issue) }}"
+        run: echo "${{ toJSON(github.event.pull_request.commits) }}"

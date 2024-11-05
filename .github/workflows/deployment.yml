@@ -3,13 +3,29 @@ on:
   push:
     branches: [main]
   pull_request:
-    types:
-      - opened
+    types: [opened, reopened, synchronize, labeled]
+  issue_comment:
+    types: [created]
   workflow_dispatch:
 
 jobs:
+  output-info:
+    runs-on: ubuntu-latest
+    outputs:
+      head-commit-message: ${{ steps.get_head_commit_message.outputs.headCommitMsg }}
+    steps:
+      - name: Get repo
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Print head git commit message
+        id: get_head_commit_message
+        run: echo "headCommitMsg=$(git show -s --format=%s)" >> "$GITHUB_OUTPUT"
+
   deploy:
+    needs: output-info
+    if: ${{ contains(needs.output-info.outputs.head-commit-message, '#build') }}
     runs-on: ubuntu-latest
     steps:
-      - name: Output event data
-        run: echo "${{ toJSON(github.event) }}"
+      - name: output commit message
+        run: echo "${{ needs.output-info.outputs.head-commit-message }}"

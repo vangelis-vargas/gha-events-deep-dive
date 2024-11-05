@@ -24,7 +24,7 @@ jobs:
 
   deploy:
     needs: output-info
-    if: ${{ contains(needs.output-info.outputs.head-commit-message, '#deploy') }}
+    if: ${{ contains(needs.output-info.outputs.head-commit-message, '#build') }}
     runs-on: ubuntu-latest
     steps:
       - name: output commit message

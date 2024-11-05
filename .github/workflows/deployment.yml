@@ -20,4 +20,11 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Print head git commit message
         id: get_head_commit_message
-        run: echo "::set-output name=headCommitMsg::$(git show -s --format=%s)"
+        run: echo "headCommitMsg=$(git show -s --format=%s)" >> "$GITHUB_OUTPUT"
+
+  print-commit-message:
+    needs: output-info
+    runs-on: ubuntu-latest
+    steps:
+      - name: output commit message
+        run: echo "${{ needs.output-info.outputs.head-commit-message }}"
